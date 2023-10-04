@@ -1,12 +1,13 @@
 import { useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
-import { Clock, Color, CylinderGeometry, InstancedBufferAttribute, Mesh, Shader } from 'three'
-import { selectBoard } from '../store/game/selectors'
-
-const clock = new Clock()
+import { Color, CylinderGeometry, InstancedBufferAttribute, Mesh, Shader } from 'three'
+import { selectBoard, selectStatus } from '../store/game/selectors'
+import { animated, config, useSpring } from '@react-spring/three'
+import { Vec3 } from '../types'
 
 const uniformsTime = { value: 0 }
+
 const onBeforeCompile = (shader: Shader) => {
     shader.uniforms.time = uniformsTime
     shader.vertexShader = `
@@ -40,7 +41,7 @@ const onBeforeCompile = (shader: Shader) => {
       float t = sin(time * PI * vColorPhase.y + vColorPhase.x) * 0.5 + 0.5;
       vec3 c = mix(gl_FragColor.rgb, vInstColor, t);
   
-      float a = smoothstep(0.015, 0.02 + (1. - t) * 0.03, abs(vPos.y));
+      float a = smoothstep(0.015, 0.04, abs(vPos.y));
       gl_FragColor.rgb = mix(c, gl_FragColor.rgb, a );
   `
     )
@@ -50,47 +51,65 @@ interface Props {
     id: number
     num: number
     onClick: () => void
-    position: [x: number, y: number, z: number]
+    position: Vec3
 }
 
 function Hex({ id, onClick, position }: Props) {
     const meshRef = useRef<Mesh>(null!)
+    const shapeRef = useRef<CylinderGeometry>(null!)
 
     const [hovered, hover] = useState(false)
 
     const { possibleGreen, possibleYellow, selectedPos } = useSelector(selectBoard)
+    const { compPoints, userPoints } = useSelector(selectStatus)
 
     const selected = selectedPos === id
+    const lifted = [...possibleGreen, ...possibleYellow].includes(id) || selected
 
-    const geometry = useMemo(() => {
-        const g = new CylinderGeometry(0.5, 0.5, 0.1, 6)
-        g.setAttribute('instColor', new InstancedBufferAttribute(new Float32Array(new Color(0xff0000)), 3))
-        g.setAttribute('colorPhase', new InstancedBufferAttribute(new Float32Array(new Color(0x88ff88)), 2))
-        return g
-    }, [])
-
-    const getColor = () => {
+    const color = useMemo(() => {
         if (possibleGreen.includes(id) || selected) return 0x88ff88
         if (possibleYellow.includes(id)) return 0xffff88
-        return hovered ? 0xffffff : 0xf0f0f0
-    }
+        return hovered ? 0xffffff : 0xdedede
+    }, [id, hovered, possibleGreen, possibleYellow, selected])
 
-    useFrame(() => {
+    const { animatedPosition, scale } = useSpring({
+        animatedPosition: (lifted ? [position[0], 0.55, position[2]] : [position[0], 0.5, position[2]]) as Vec3,
+        scale: (lifted ? [1, 2, 1] : [1, 1, 1]) as Vec3,
+        config: config.wobbly
+    })
+
+    useFrame(({ clock }) => {
+        const c = userPoints >= compPoints ? 0x0000ff : 0xff0000
+        shapeRef.current.setAttribute(
+            'instColor',
+            new InstancedBufferAttribute(new Float32Array(new Color(lifted ? color : c)), 3)
+        )
+        shapeRef.current.setAttribute(
+            'colorPhase',
+            new InstancedBufferAttribute(new Float32Array(new Color(0x88ff88)), 2)
+        )
         uniformsTime.value = clock.getElapsedTime()
-        meshRef.current.position.y = [...possibleGreen, ...possibleYellow].includes(id) || selected ? 0.55 : 0.5
     })
 
     return (
-        <mesh
-            {...{ geometry, onClick, position }}
+        <animated.mesh
+            {...{ onClick, scale }}
             ref={meshRef}
+            position={animatedPosition}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             castShadow
             receiveShadow
         >
-            <meshStandardMaterial {...{ onBeforeCompile }} color={getColor()} roughness={0.75} metalness={0.25} />
-        </mesh>
+            <cylinderGeometry ref={shapeRef} args={[0.5, 0.5, 0.1, 6]} />
+            <meshStandardMaterial
+                {...{ color, onBeforeCompile }}
+                transparent
+                roughness={0.1}
+                metalness={0.5}
+                opacity={0.95}
+            />
+        </animated.mesh>
     )
 }
 

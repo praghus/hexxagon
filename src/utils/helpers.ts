@@ -165,69 +165,67 @@ const computerPlays = (data: number[]) => {
     const compPlayPosBestMove = []
     const compPlayBestMoveBalls = []
     const count = data.length
+
     for (let i = 0; i < count; i++) {
         if (newBoard[i] === 2 && !compPlayPos.includes(i)) {
             compPlayPos.push(i)
         }
     }
+
     for (let i = 0; i < compPlayPos.length; i++) {
         findPossible(data, compPlayPos[i])
         const compPlayRound = possibleGreen.concat(possibleYellow)
         const tempCompAdjArr1 = new Array(compPlayRound.length)
         for (let j = 0; j < compPlayRound.length; j++) {
             const neighbourCells = checkNeighbourCells(data, compPlayRound[j], 1)
-            if (possibleGreen.includes(compPlayRound[j])) {
-                tempCompAdjArr1[j] = neighbourCells.length + 1
-            } else {
-                tempCompAdjArr1[j] = neighbourCells.length
-            }
+            tempCompAdjArr1[j] = possibleGreen.includes(compPlayRound[j])
+                ? neighbourCells.length + 1
+                : neighbourCells.length
         }
-        const tempCompAdjArr = tempCompAdjArr1.slice(0)
+        const tempCompAdjArr = [...tempCompAdjArr1]
+
         tempCompAdjArr1.sort((a, b) => b - a)
-        let flag = 0
+
+        let flag = false
         for (let j = 0; j < tempCompAdjArr1.length; j++) {
             for (let k = 0; k < tempCompAdjArr.length; k++) {
                 if (tempCompAdjArr1[j] === tempCompAdjArr[k]) {
                     compPlayPosBestMove[i] = compPlayRound[k]
                     compPlayBestMoveBalls[i] = tempCompAdjArr[k]
-                    flag = 1
+                    flag = true
                     break
                 }
             }
-            if (flag === 1) {
+            if (flag) {
                 break
             }
         }
     }
-    const compPlayBestMoveBalls1 = compPlayBestMoveBalls.slice(0)
-    compPlayBestMoveBalls1.sort((a, b) => b - a)
-    let flag1 = 0
+
+    const compPlayBestMoveBalls1 = [...compPlayBestMoveBalls].sort((a, b) => b - a)
+
+    let flag1 = false
     let checkNeedBest = 0
+
     for (let i = 0; i < compPlayBestMoveBalls1.length; i++) {
         for (let j = 0; j < compPlayBestMoveBalls.length; j++) {
             if (compPlayBestMoveBalls1[i] === compPlayBestMoveBalls[j]) {
                 findPossible(data, compPlayPos[j])
-                if (possibleGreen.includes(compPlayPosBestMove[j])) {
-                    newBoard[compPlayPos[j]] = 2
+
+                if ([...possibleGreen, ...possibleYellow].includes(compPlayPosBestMove[j])) {
+                    newBoard[compPlayPos[j]] = possibleGreen.includes(compPlayPosBestMove[j]) ? 2 : 0
                     newBoard[compPlayPosBestMove[j]] = 2
                     checkNeedBest = compPlayPosBestMove[j]
-                    flag1 = 1
-                } else if (possibleYellow.includes(compPlayPosBestMove[j])) {
-                    newBoard[compPlayPos[j]] = 0
-                    newBoard[compPlayPosBestMove[j]] = 2
-                    checkNeedBest = compPlayPosBestMove[j]
-                    flag1 = 1
+                    flag1 = true
                 }
-                if (flag1 === 1) {
+                if (flag1) {
                     const neighbourCells = checkNeighbourCells(data, checkNeedBest, 1)
-                    for (let i = 0; i < neighbourCells.length; i++) {
-                        newBoard[neighbourCells[i]] = 2
-                    }
+                    for (const nc of neighbourCells) newBoard[nc] = 2
                     break
                 }
             }
         }
-        if (flag1 === 1) {
+        if (flag1) {
             break
         }
     }
@@ -240,17 +238,16 @@ function checkCompletedGame(data: number[]) {
     let zeroPoints = 0
     let doNotcompleteComputer = 0
     let doNotcompleteUser = 0
+    let win = 0
     for (let i = 0; i < data.length; i++) {
         findPossible(data, i)
         if (data[i] === 1) {
             userPoints++
-            //document.hexxagonForm.userPointId.value = userPoints;
             if (possibleGreen.length + possibleYellow.length != 0) {
                 doNotcompleteComputer++
             }
         } else if (data[i] === 2) {
             compPoints++
-            //document.hexxagonForm.compPointId.value = compPoints;
             if (possibleGreen.length + possibleYellow.length != 0) {
                 doNotcompleteUser++
             }
@@ -258,20 +255,27 @@ function checkCompletedGame(data: number[]) {
             zeroPoints++
         }
     }
-    if (zeroPoints != 0 && doNotcompleteComputer == 0) {
+    if (zeroPoints !== 0 && doNotcompleteComputer === 0) {
         console.info('Computer Wins!! Try Again')
-    } else if (zeroPoints != 0 && doNotcompleteUser == 0) {
-        console.info('Game completed')
+        win = 2
+    } else if (zeroPoints !== 0 && doNotcompleteUser === 0) {
+        console.info('Game completed. You Won!')
+        win = 1
     }
-    if (zeroPoints == 0) {
-        if (userPoints == compPoints) {
+
+    if (zeroPoints === 0) {
+        if (userPoints === compPoints) {
             console.info('Game Draw!!  Try Again')
+            win = -1
         } else if (userPoints > compPoints) {
-            console.info('Game completed')
+            console.info('Game completed. You Won!')
+            win = 1
         } else {
             console.info('Computer Wins!! Try Again')
+            win = 2
         }
     }
+    return { userPoints, compPoints, win }
 }
 
 export { computerPlays, checkCompletedGame, checkNeighbourCells, findPossible }

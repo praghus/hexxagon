@@ -1,11 +1,12 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Mesh, PolyhedronGeometry, Vector3 } from 'three'
+import { Vec3 } from '../types'
 
 interface Props {
     id: number
     onClick: () => void
-    position: [x: number, y: number, z: number]
+    position: Vec3
 }
 
 function Rubie({ onClick, position }: Props) {

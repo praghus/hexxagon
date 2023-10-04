@@ -5,7 +5,8 @@ import {
     GAME_SET_PLAYER_TURN,
     GAME_SET_POSITION,
     GAME_SET_POSSIBLE_GREEN,
-    GAME_SET_POSSIBLE_YELLOW
+    GAME_SET_POSSIBLE_YELLOW,
+    GAME_SET_STATUS
 } from './constants'
 import { GameState } from './types'
 
@@ -21,6 +22,8 @@ function gameReducer(state = INITIAL_STATE, action: AnyAction): GameState {
             return { ...state, board: { ...state.board, possibleGreen: action.payload.possibleGreen } }
         case GAME_SET_POSSIBLE_YELLOW:
             return { ...state, board: { ...state.board, possibleYellow: action.payload.possibleYellow } }
+        case GAME_SET_STATUS:
+            return { ...state, status: action.payload.status }
         default:
             return state
     }
