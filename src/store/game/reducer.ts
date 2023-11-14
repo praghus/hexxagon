@@ -6,7 +6,9 @@ import {
     GAME_SET_POSITION,
     GAME_SET_POSSIBLE_GREEN,
     GAME_SET_POSSIBLE_YELLOW,
-    GAME_SET_STATUS
+    GAME_SET_SPREED_POSITION,
+    GAME_SET_STATUS,
+    GAME_RESET
 } from './constants'
 import { GameState } from './types'
 
@@ -22,8 +24,12 @@ function gameReducer(state = INITIAL_STATE, action: AnyAction): GameState {
             return { ...state, board: { ...state.board, possibleGreen: action.payload.possibleGreen } }
         case GAME_SET_POSSIBLE_YELLOW:
             return { ...state, board: { ...state.board, possibleYellow: action.payload.possibleYellow } }
+        case GAME_SET_SPREED_POSITION:
+            return { ...state, board: { ...state.board, spreedPos: action.payload.spreedPos } }
         case GAME_SET_STATUS:
             return { ...state, status: action.payload.status }
+        case GAME_RESET:
+            return INITIAL_STATE
         default:
             return state
     }

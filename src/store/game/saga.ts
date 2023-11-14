@@ -1,13 +1,27 @@
-import { all, call, put, select, takeEvery } from 'redux-saga/effects'
+import { all, call, put, select, takeLatest } from 'redux-saga/effects'
 import { AnyAction } from '@reduxjs/toolkit'
 
 import { checkCompletedGame, checkNeighbourCells, computerPlays, findPossible } from '../../utils/helpers'
-import { setData, setPlayerTurn, setPosition, setPossibleGreen, setPossibleYellow, setStatus } from './actions'
+import {
+    setData,
+    setPlayerTurn,
+    setPosition,
+    setPossibleGreen,
+    setPossibleYellow,
+    setSpreedPosition,
+    setStatus
+} from './actions'
 import { GAME_EVENT_COMPUTER_MOVE, GAME_EVENT_PLAYER_MOVE } from './constants'
 import { selectBoard, selectIsPlayerTurn } from './selectors'
 import { GameBoardState } from './types'
+import { CELLS } from '../../constants'
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+function* reverse() {
+    const { data }: GameBoardState = yield select(selectBoard)
+    yield put(setData(data.map((d: number | null) => (d !== null && d < 0 ? Math.abs(d) : d))))
+}
 
 function* handlePlayerMove(action: AnyAction) {
     const { pos } = action.payload
@@ -15,7 +29,7 @@ function* handlePlayerMove(action: AnyAction) {
     const isPlayerTurn: boolean = yield select(selectIsPlayerTurn)
 
     if (isPlayerTurn) {
-        if (data[pos] === 1 && selectedPos === -1) {
+        if (data[pos] === CELLS.PLAYER && selectedPos === -1) {
             const { possibleGreen, possibleYellow } = yield call(findPossible, data, pos)
             yield put(setPosition(pos))
             yield put(setPossibleGreen(possibleGreen))
@@ -27,33 +41,32 @@ function* handlePlayerMove(action: AnyAction) {
 
             if (possibleMove.includes(pos)) {
                 if (possibleGreen.includes(pos)) {
-                    newBoard[selectedPos] = 1
+                    newBoard[selectedPos] = CELLS.PLAYER
                 } else if (possibleYellow.includes(pos)) {
-                    newBoard[selectedPos] = 0
+                    newBoard[selectedPos] = CELLS.EMPTY
                 }
                 yield put(setPosition(-1))
                 yield put(setPossibleGreen([]))
                 yield put(setPossibleYellow([]))
 
-                newBoard[pos] = 1
+                newBoard[pos] = CELLS.PLAYER
 
                 if (pos !== selectedPos) {
-                    const neighbourCells = checkNeighbourCells(data, pos, 2)
-                    for (let i = 0; i < neighbourCells.length; i++) {
-                        newBoard[neighbourCells[i]] = 1
-                    }
-                    // moves++
-                    yield put(setPlayerTurn(false))
+                    const neighbourCells = checkNeighbourCells(data, pos, CELLS.COMPUTER)
+                    for (const nc of neighbourCells) newBoard[nc] = -CELLS.PLAYER
                     yield put(setData(newBoard))
+                    yield put(setSpreedPosition(selectedPos))
                     yield sleep(500)
-                    yield handleComputerMove()
+                    yield call(reverse)
+                    yield put(setPlayerTurn(false))
                 }
             } else {
-                if (selectedPos === -1) {
-                    console.info('Select Pearl...!')
-                } else {
-                    console.info('Select Yellow, Green or Unselect Pearl ')
-                }
+                // @todo: refactor
+                // if (selectedPos === -1) {
+                //     console.info('Select Blue...!')
+                // } else {
+                //     // console.info('Select Yellow, Green or Unselect ')
+                // }
             }
         }
     }
@@ -61,15 +74,18 @@ function* handlePlayerMove(action: AnyAction) {
 
 function* handleComputerMove() {
     const { data }: GameBoardState = yield select(selectBoard)
-    const newBoard: number[] = yield call(computerPlays, data)
+    const { newBoard, pos } = yield call(computerPlays, data)
+    yield put(setSpreedPosition(pos))
     yield put(setData(newBoard))
-    yield put(setPlayerTurn(true))
+    yield sleep(500)
+    yield call(reverse)
     yield put(setStatus(checkCompletedGame(newBoard)))
+    yield put(setPlayerTurn(true))
 }
 
 export function* gameSaga() {
     yield all([
-        takeEvery(GAME_EVENT_PLAYER_MOVE, handlePlayerMove),
-        takeEvery(GAME_EVENT_COMPUTER_MOVE, handleComputerMove)
+        takeLatest(GAME_EVENT_PLAYER_MOVE, handlePlayerMove),
+        takeLatest(GAME_EVENT_COMPUTER_MOVE, handleComputerMove)
     ])
 }

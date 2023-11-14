@@ -4,8 +4,8 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    background: rgb(63, 94, 251);
-    background: radial-gradient(circle, rgba(77, 128, 251, 1) 0%, rgba(0, 0, 10, 1) 100%);
+    background: rgb(77, 28, 164);
+    background: radial-gradient(circle, rgb(77, 28, 164) 0%, rgb(0, 0, 10) 100%);
     overflow: hidden;
 
     font-synthesis: none;

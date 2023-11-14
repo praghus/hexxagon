@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
-import { Color, CylinderGeometry, InstancedBufferAttribute, Mesh, Shader } from 'three'
-import { selectBoard, selectStatus } from '../store/game/selectors'
 import { animated, config, useSpring } from '@react-spring/three'
-import { Vec3 } from '../types'
+import { Color, CylinderGeometry, InstancedBufferAttribute, Mesh, Shader } from 'three'
+import { selectBoard, selectPoints } from '../../store/game/selectors'
+import { Vec3 } from '../../types'
 
 const uniformsTime = { value: 0 }
 
@@ -39,9 +39,9 @@ const onBeforeCompile = (shader: Shader) => {
       gl_FragColor = globalBloom > 0.5 ? vec4(0, 0, 0, 1) : gl_FragColor;
 
       float t = sin(time * PI * vColorPhase.y + vColorPhase.x) * 0.5 + 0.5;
+      float a = smoothstep(0.015, 0.04, abs(vPos.y));
       vec3 c = mix(gl_FragColor.rgb, vInstColor, t);
   
-      float a = smoothstep(0.015, 0.04, abs(vPos.y));
       gl_FragColor.rgb = mix(c, gl_FragColor.rgb, a );
   `
     )
@@ -49,7 +49,7 @@ const onBeforeCompile = (shader: Shader) => {
 
 interface Props {
     id: number
-    num: number
+    num: number | null
     onClick: () => void
     position: Vec3
 }
@@ -60,8 +60,8 @@ function Hex({ id, onClick, position }: Props) {
 
     const [hovered, hover] = useState(false)
 
+    const { computerPoints, playerPoints } = useSelector(selectPoints)
     const { possibleGreen, possibleYellow, selectedPos } = useSelector(selectBoard)
-    const { compPoints, userPoints } = useSelector(selectStatus)
 
     const selected = selectedPos === id
     const lifted = [...possibleGreen, ...possibleYellow].includes(id) || selected
@@ -69,7 +69,7 @@ function Hex({ id, onClick, position }: Props) {
     const color = useMemo(() => {
         if (possibleGreen.includes(id) || selected) return 0x88ff88
         if (possibleYellow.includes(id)) return 0xffff88
-        return hovered ? 0xffffff : 0xdedede
+        return hovered ? 0xffffff : 0xdedeff
     }, [id, hovered, possibleGreen, possibleYellow, selected])
 
     const { animatedPosition, scale } = useSpring({
@@ -79,7 +79,7 @@ function Hex({ id, onClick, position }: Props) {
     })
 
     useFrame(({ clock }) => {
-        const c = userPoints >= compPoints ? 0x0000ff : 0xff0000
+        const c = playerPoints > computerPoints ? 0x0000ff : (playerPoints === computerPoints && 0x555555) || 0xff0000
         shapeRef.current.setAttribute(
             'instColor',
             new InstancedBufferAttribute(new Float32Array(new Color(lifted ? color : c)), 3)
@@ -88,6 +88,7 @@ function Hex({ id, onClick, position }: Props) {
             'colorPhase',
             new InstancedBufferAttribute(new Float32Array(new Color(0x88ff88)), 2)
         )
+
         uniformsTime.value = clock.getElapsedTime()
     })
 
@@ -102,13 +103,7 @@ function Hex({ id, onClick, position }: Props) {
             receiveShadow
         >
             <cylinderGeometry ref={shapeRef} args={[0.5, 0.5, 0.1, 6]} />
-            <meshStandardMaterial
-                {...{ color, onBeforeCompile }}
-                transparent
-                roughness={0.1}
-                metalness={0.5}
-                opacity={0.95}
-            />
+            <meshStandardMaterial {...{ color, onBeforeCompile }} roughness={0.6} metalness={0.4} />
         </animated.mesh>
     )
 }
