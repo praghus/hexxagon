@@ -4,7 +4,7 @@
 
 ## :video_game: [Demo](https://praghus.github.io/hexxagon/)
 
-![Screenshot 2023-11-16 at 14 50 45](https://github.com/praghus/hexxagon/assets/5312169/f51195d5-3f07-4761-b6d7-03920752ef3e)
+[![Screenshot 2023-11-16 at 14 50 45](https://github.com/praghus/hexxagon/assets/5312169/f51195d5-3f07-4761-b6d7-03920752ef3e)](https://praghus.github.io/hexxagon/)
 
 ## Installation
 
