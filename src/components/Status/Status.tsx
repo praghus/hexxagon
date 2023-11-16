@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import isEmpty from 'lodash.isempty'
 
 import { selectBoard, selectPoints, selectStatus } from '../../store/game/selectors'
-import { resetGame, setData } from '../../store/game/actions'
-import { getStatusTitle } from '../../utils/helpers'
-import { LevelData } from '../../store/game/types'
+import { replayGame, resetGame, setCurrentLevel } from '../../store/game/actions'
+import { getStatusTitle, isValidArray } from '../../utils/helpers'
+import { usePreventUnload } from '../../hooks/usePreventUnload'
 import { LEVELS } from '../../constants'
 import { BoardPreview } from '../BoardPreview'
 import { Modal } from '../Modal'
@@ -20,15 +20,24 @@ function Status() {
     const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false)
 
     const dispatch = useDispatch()
+
+    const onSelectLevel = (level: keyof typeof LEVELS) => dispatch(setCurrentLevel(level))
+
     const onRestart = () => {
         setIsConfirmationDialogOpen(false)
         dispatch(resetGame())
     }
-    const onSelectLevel = (data: LevelData) => dispatch(setData(data))
+
+    const onReplay = () => {
+        setIsConfirmationDialogOpen(false)
+        dispatch(replayGame())
+    }
 
     const progress = (playerPoints / (computerPoints + playerPoints)) * 100
     const isNewGame = isEmpty(data)
     const isCompleted = status > 0
+
+    usePreventUnload(!isValidArray(data))
 
     return (
         <>
@@ -51,18 +60,28 @@ function Status() {
                 </>
             )}
 
-            <Modal isOpen={isNewGame} title="HEXXAGON">
+            <Modal isOpen={isNewGame} title="HEXXAGON" height={460}>
                 <div className="levelSelect">
-                    {Object.values(LEVELS).map((d, i) => (
-                        <BoardPreview key={`level-${i}`} className="thumb" onClick={() => onSelectLevel(d)} data={d} />
+                    {Object.keys(LEVELS).map(key => (
+                        <BoardPreview
+                            className="thumb"
+                            key={`level-${key}`}
+                            data={LEVELS[key]}
+                            onClick={() => onSelectLevel(key)}
+                        />
                     ))}
                 </div>
             </Modal>
 
             <Modal isOpen={isCompleted} title={getStatusTitle(status)}>
-                <button className="button" onClick={onRestart}>
-                    Play again
-                </button>
+                <div className="button-container">
+                    <button className="button" onClick={onReplay}>
+                        Play again
+                    </button>
+                    <button className="button" onClick={onRestart}>
+                        Exit
+                    </button>
+                </div>
             </Modal>
 
             <Modal isOpen={isConfirmationDialogOpen} title="Are you sure you want to change the board?">

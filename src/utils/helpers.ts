@@ -305,11 +305,11 @@ function getPawnColor(num: number) {
 function getStatusTitle(status: number) {
     switch (status) {
         case -1:
-            return 'Game Draw! Try Again'
+            return 'Game Draw!'
         case 1:
             return 'Game completed. You Won!'
         case 2:
-            return 'Computer Wins! Try Again'
+            return 'Computer Wins!'
     }
 }
 

@@ -1,8 +1,11 @@
+import { LEVELS } from '../../constants'
 import { LevelData } from './types'
 import {
     GAME_EVENT_COMPUTER_MOVE,
     GAME_EVENT_PLAYER_MOVE,
+    GAME_REPLAY,
     GAME_RESET,
+    GAME_SET_CURRENT_LEVEL,
     GAME_SET_DATA,
     GAME_SET_PLAYER_TURN,
     GAME_SET_POSITION,
@@ -25,9 +28,18 @@ const resetGame = () => ({
     type: GAME_RESET
 })
 
+const replayGame = () => ({
+    type: GAME_REPLAY
+})
+
 const setData = (data: LevelData) => ({
     payload: { data },
     type: GAME_SET_DATA
+})
+
+const setCurrentLevel = (level: keyof typeof LEVELS) => ({
+    payload: { level },
+    type: GAME_SET_CURRENT_LEVEL
 })
 
 const setPlayerTurn = (isPlayerTurn: boolean) => ({
@@ -64,6 +76,8 @@ export {
     computerMove,
     playerMove,
     resetGame,
+    replayGame,
+    setCurrentLevel,
     setData,
     setPlayerTurn,
     setPosition,
