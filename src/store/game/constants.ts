@@ -1,9 +1,10 @@
-import { LEVELS } from '../../constants'
+// import { LEVELS } from '../../constants'
+import { LevelData } from './types'
 
 export const GAME_RESOURCE_NAME = 'game'
 export const INITIAL_STATE = {
     board: {
-        data: LEVELS.CLASSIC,
+        data: [] as LevelData, //LEVELS.L8 as LevelData,
         possibleGreen: [] as number[],
         possibleYellow: [] as number[],
         selectedPos: -1,

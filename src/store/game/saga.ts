@@ -23,13 +23,22 @@ function* reverse() {
     yield put(setData(data.map((d: number | null) => (d !== null && d < 0 ? Math.abs(d) : d))))
 }
 
+function* clearPosition() {
+    yield put(setPosition(-1))
+    yield put(setPossibleGreen([]))
+    yield put(setPossibleYellow([]))
+}
+
 function* handlePlayerMove(action: AnyAction) {
     const { pos } = action.payload
     const { data, selectedPos }: GameBoardState = yield select(selectBoard)
     const isPlayerTurn: boolean = yield select(selectIsPlayerTurn)
 
     if (isPlayerTurn) {
-        if (data[pos] === CELLS.PLAYER && selectedPos === -1) {
+        if (data[pos] === CELLS.PLAYER) {
+            if (selectedPos !== -1 && pos !== selectedPos) {
+                yield call(clearPosition)
+            }
             const { possibleGreen, possibleYellow } = yield call(findPossible, data, pos)
             yield put(setPosition(pos))
             yield put(setPossibleGreen(possibleGreen))
@@ -45,28 +54,19 @@ function* handlePlayerMove(action: AnyAction) {
                 } else if (possibleYellow.includes(pos)) {
                     newBoard[selectedPos] = CELLS.EMPTY
                 }
-                yield put(setPosition(-1))
-                yield put(setPossibleGreen([]))
-                yield put(setPossibleYellow([]))
+                yield call(clearPosition)
 
                 newBoard[pos] = CELLS.PLAYER
 
                 if (pos !== selectedPos) {
                     const neighbourCells = checkNeighbourCells(data, pos, CELLS.COMPUTER)
                     for (const nc of neighbourCells) newBoard[nc] = -CELLS.PLAYER
+                    yield put(setPlayerTurn(false))
                     yield put(setData(newBoard))
                     yield put(setSpreedPosition(selectedPos))
                     yield sleep(500)
                     yield call(reverse)
-                    yield put(setPlayerTurn(false))
                 }
-            } else {
-                // @todo: refactor
-                // if (selectedPos === -1) {
-                //     console.info('Select Blue...!')
-                // } else {
-                //     // console.info('Select Yellow, Green or Unselect ')
-                // }
             }
         }
     }

@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Mesh, SphereGeometry } from 'three'
 import { useSelector } from 'react-redux'
 import { animated, config, useSpring } from '@react-spring/three'
+
 import { Vec3 } from '../../types'
 import { selectBoard } from '../../store/game/selectors'
-import { calculatePosition } from '../../utils/helpers'
+import { calculatePosition, getPawnColor } from '../../utils/helpers'
 
 interface Props {
     id: number
@@ -20,17 +21,6 @@ function Pawn({ num, onClick, position }: Props) {
     const { spreedPos } = useSelector(selectBoard)
     const startPos = spreedPos > -1 ? calculatePosition(spreedPos) : position
 
-    const color = useMemo(() => {
-        switch (num) {
-            case 1:
-            case -2:
-                return 0x3333ff
-            case 2:
-            case -1:
-                return 0xff3333
-        }
-    }, [num])
-
     const { animatedPosition, scale } = useSpring({
         animatedPosition: (active ? [position[0], 1, position[2]] : [startPos[0], 1, startPos[2]]) as Vec3,
         scale: num > 0 ? 3.5 : 2.5,
@@ -44,7 +34,7 @@ function Pawn({ num, onClick, position }: Props) {
     return (
         <animated.mesh {...{ scale, onClick }} position={animatedPosition} ref={meshRef} castShadow receiveShadow>
             <sphereGeometry ref={shapeRef} args={[0.1, 24, 24]} />
-            <meshStandardMaterial {...{ color }} roughness={0.4} metalness={0.6} />
+            <meshStandardMaterial color={getPawnColor(num)} roughness={0.4} metalness={0.6} />
         </animated.mesh>
     )
 }

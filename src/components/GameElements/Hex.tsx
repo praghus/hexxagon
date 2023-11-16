@@ -1,8 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 import { animated, config, useSpring } from '@react-spring/three'
 import { Color, CylinderGeometry, InstancedBufferAttribute, Mesh, Shader } from 'three'
+
 import { selectBoard, selectPoints } from '../../store/game/selectors'
 import { Vec3 } from '../../types'
 
@@ -66,11 +67,11 @@ function Hex({ id, onClick, position }: Props) {
     const selected = selectedPos === id
     const lifted = [...possibleGreen, ...possibleYellow].includes(id) || selected
 
-    const color = useMemo(() => {
-        if (possibleGreen.includes(id) || selected) return 0x88ff88
-        if (possibleYellow.includes(id)) return 0xffff88
-        return hovered ? 0xffffff : 0xdedeff
-    }, [id, hovered, possibleGreen, possibleYellow, selected])
+    // @todo: refactor!
+    let color: number
+    if (possibleGreen.includes(id) || selected) color = 0x88ff88
+    else if (possibleYellow.includes(id)) color = 0xffff88
+    else color = hovered ? 0xffffff : 0xdedeff
 
     const { animatedPosition, scale } = useSpring({
         animatedPosition: (lifted ? [position[0], 0.55, position[2]] : [position[0], 0.5, position[2]]) as Vec3,

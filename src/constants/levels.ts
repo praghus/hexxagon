@@ -1,27 +1,15 @@
+import { LevelData } from '../store/game/types'
+
 const n = null
-
 export const COLUMNS = 10
-
 export const CELLS = {
     EMPTY: 0,
     PLAYER: 1,
     COMPUTER: 2
 }
-
 // prettier-ignore
-export const LEVELS = {
-    CLASSIC: [
-        n,n,n,n,1,0,0,0,2,n,
-        n,n,n,0,0,0,0,0,0,n,
-        n,n,0,0,0,0,0,0,0,n,
-        n,0,0,0,0,n,0,0,0,n,
-        2,0,0,n,0,0,0,0,1,n,
-        0,0,0,0,n,0,0,0,n,n,
-        0,0,0,0,0,0,0,n,n,n,
-        0,0,0,0,0,0,n,n,n,n,
-        1,0,0,0,2,n,n,n,n,n
-    ],
-    L1: [
+export const LEVELS: Record<string, LevelData> = {
+    L0: [
         n,n,n,n,n,n,n,n,n,n,
         n,n,n,n,n,0,0,0,n,n,
         n,n,n,n,0,0,0,0,n,n,
@@ -31,6 +19,17 @@ export const LEVELS = {
         n,n,0,0,0,0,n,n,n,n,
         n,n,0,0,0,n,n,n,n,n,
         n,n,n,n,n,n,n,n,n,n
+    ],
+    L1: [
+        n,n,n,n,1,0,0,0,2,n,
+        n,n,n,0,0,0,0,0,0,n,
+        n,n,0,0,0,0,0,0,0,n,
+        n,0,0,0,0,n,0,0,0,n,
+        2,0,0,n,0,0,0,0,1,n,
+        0,0,0,0,n,0,0,0,n,n,
+        0,0,0,0,0,0,0,n,n,n,
+        0,0,0,0,0,0,n,n,n,n,
+        1,0,0,0,2,n,n,n,n,n
     ],
     L2: [
         n,n,n,n,0,0,0,0,0,n,
@@ -63,6 +62,50 @@ export const LEVELS = {
         0,n,0,0,0,0,n,0,n,n,
         2,n,0,0,0,n,1,n,n,n,
         0,0,n,n,0,0,n,n,n,n,
+        0,0,0,0,0,n,n,n,n,n
+    ],
+    L5: [
+        n,n,n,n,0,0,0,0,0,n,
+        n,n,n,2,0,0,0,0,1,n,
+        n,n,0,0,n,0,n,0,0,n,
+        n,0,0,0,n,n,0,0,0,n,
+        1,0,n,0,n,0,n,0,2,n,
+        0,0,0,n,n,0,0,0,n,n,
+        0,0,n,0,n,0,0,n,n,n,
+        2,0,0,0,0,1,n,n,n,n,
+        0,0,0,0,0,n,n,n,n,n
+    ],
+    L6: [
+        n,n,n,n,0,0,0,0,0,n,
+        n,n,n,n,0,0,0,0,n,n,
+        n,n,1,0,0,0,0,0,2,n,
+        n,0,n,0,0,0,0,n,0,n,
+        0,0,0,0,0,0,0,0,0,n,
+        0,n,0,0,0,0,n,0,n,n,
+        2,0,0,0,0,0,1,n,n,n,
+        n,0,0,0,0,n,n,n,n,n,
+        0,0,0,0,0,n,n,n,n,n
+    ],
+    L7: [
+        n,n,n,n,0,n,0,n,0,n,
+        n,n,n,n,0,0,0,0,n,n,
+        n,n,1,0,n,n,n,0,2,n,
+        n,0,0,n,n,n,n,0,0,n,
+        0,0,0,0,0,0,0,0,0,n,
+        0,0,n,n,n,n,0,0,n,n,
+        2,0,n,n,n,0,1,n,n,n,
+        n,0,0,0,0,n,n,n,n,n,
+        0,n,0,n,0,n,n,n,n,n
+    ],
+    L8: [
+        n,n,n,n,0,0,0,0,0,n,
+        n,n,n,0,n,n,n,n,0,n,
+        n,n,1,0,0,0,0,0,2,n,
+        n,0,n,0,0,0,0,n,0,n,
+        0,0,0,0,0,0,0,0,0,n,
+        0,n,0,0,0,0,n,0,n,n,
+        2,0,0,0,0,0,1,n,n,n,
+        0,n,n,n,n,0,n,n,n,n,
         0,0,0,0,0,n,n,n,n,n
     ]
 }

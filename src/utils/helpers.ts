@@ -6,6 +6,10 @@ const neighbourCells: number[] = []
 const possibleGreen: number[] = []
 const possibleYellow: number[] = []
 
+function isValidArray<T>(array?: T) {
+    return Array.isArray(array) && array?.length > 0
+}
+
 function calculatePosition(index: number): Vec3 {
     const unit = Math.sqrt(3) * 0.5 * 1.025
     const [row, col] = [Math.floor(index / COLUMNS), index % COLUMNS]
@@ -252,7 +256,7 @@ const computerPlays = (data: LevelData) => {
     return { neighbourCells, newBoard, pos }
 }
 
-function checkCompletedGame(data: number[]) {
+function checkCompletedGame(data: LevelData) {
     let playerPoints = 0
     let computerPoints = 0
     let zeroPoints = 0
@@ -285,4 +289,38 @@ function checkCompletedGame(data: number[]) {
     return status
 }
 
-export { calculateDistance, calculatePosition, computerPlays, checkCompletedGame, checkNeighbourCells, findPossible }
+function getPawnColor(num: number) {
+    switch (num) {
+        case 1:
+        case -2:
+            return '#3333ff'
+        case 2:
+        case -1:
+            return '#ff3333'
+        default:
+            return '#dedeff'
+    }
+}
+
+function getStatusTitle(status: number) {
+    switch (status) {
+        case -1:
+            return 'Game Draw! Try Again'
+        case 1:
+            return 'Game completed. You Won!'
+        case 2:
+            return 'Computer Wins! Try Again'
+    }
+}
+
+export {
+    calculateDistance,
+    calculatePosition,
+    computerPlays,
+    checkCompletedGame,
+    checkNeighbourCells,
+    findPossible,
+    getPawnColor,
+    getStatusTitle,
+    isValidArray
+}

@@ -31,3 +31,77 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
         'Helvetica Neue', sans-serif;
 }
+
+.button-container {
+    display: flex;
+}
+
+.button {
+    padding: 16px;
+    margin: 0 5px;
+    background-color: #fff;
+    color: #6929c4;
+    font-size: 1em;
+    border: none;
+    margin-top: 16px;
+    width: 90%;
+    align-self: center;
+    cursor: pointer;
+    transition: background-color 0.1s linear;
+}
+
+.button:hover,
+.button:focus {
+    background-color: #e8daff;
+}
+
+.levelSelect {
+    width: 380px;
+    display: grid;
+    grid-template-columns: 130px 130px 130px;
+    grid-gap: 10px;
+}
+
+.boardChangeHint {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+    background: #fff;
+    color: #000;
+    padding: 5px 10px;
+    user-select: none;
+}
+
+.boardChangeHint:hover {
+    display: block;
+}
+
+.boardPreview {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.boardPreview:hover + .boardChangeHint {
+    display: block;
+}
+
+.thumb {
+    cursor: pointer;
+    border-radius: 8px;
+    background: #ffffff22;
+}
+
+.thumb:hover {
+    background: #ffffff55;
+}
+
+.copyrights {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
