@@ -13,7 +13,7 @@ import Pawn from './Pawn'
 function Board() {
     const { data } = useSelector(selectBoard)
     const isPlayerTurn = useSelector(selectIsPlayerTurn)
-    const envMap = useEnvironment({ path: '/environment/buildings' })
+    const envMap = useEnvironment({ path: './environment/buildings' })
     const dispatch = useDispatch()
     const onPlayerMove = (pos: number) => dispatch(playerMove(pos))
 
