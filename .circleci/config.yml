@@ -9,7 +9,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:VFEvWO8fdEuk1RpvPQCTspLZLwlBcvvCmnhjTWmZIew"
+            - "SHA256:V5RZOgCkjiyAniKwhIYPEp5vJlxGHPSVaWV7Eyj8mYQ"
       - checkout
       - node/install-packages:
           pkg-manager: yarn
@@ -22,7 +22,7 @@ jobs:
             - .
       - gh-pages/deploy:
           setup-git: true 
-          ssh-fingerprints: SHA256:VFEvWO8fdEuk1RpvPQCTspLZLwlBcvvCmnhjTWmZIew
+          ssh-fingerprints: SHA256:V5RZOgCkjiyAniKwhIYPEp5vJlxGHPSVaWV7Eyj8mYQ
 
 workflows:
   test_my_app:
