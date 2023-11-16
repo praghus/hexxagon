@@ -4,30 +4,53 @@
     width: 100%;
     justify-content: center;
     z-index: 1;
-    bottom: 5%;
+    bottom: 20px;
 }
 
 .statusBar {
     width: 30%;
-    height: 32px;
+    height: 20px;
     background-color: #ff3333;
     border-radius: 8px;
+    box-shadow: 0px 0px 20px 5px #ff333355;
 }
 
 .progressBar {
-    height: 32px;
+    height: 20px;
     background-color: #3333ff;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
     transition: width 500ms ease-in-out;
+    box-shadow: 0px 0px 20px 5px #3333ffaa;
+}
+
+.playerPoints {
+    position: absolute;
+    left: 50px;
+    top: 0;
+    background: #3333ff;
+    box-shadow: 0px 0px 10px 5px #3333ff66;
+}
+
+.computerPoints {
+    position: absolute;
+    right: 50px;
+    top: 0;
+    background: #ff3333;
+    box-shadow: 0px 0px 10px 5px #ff333366;
 }
 
 .points {
+    text-align: center;
+    width: 60px;
+    height: 60px;
     margin: 0 10px;
     font-weight: bold;
     font-size: 2em;
-    line-height: 1em;
+    line-height: 1.7em;
     color: #fff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .button-container {
@@ -63,8 +86,8 @@
 .boardChangeHint {
     display: none;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    left: 0px;
+    bottom: 0px;
     z-index: 2;
     background: #fff;
     color: #000;
@@ -78,8 +101,8 @@
 
 .boardPreview {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    bottom: 10px;
+    left: 10px;
     z-index: 2;
     cursor: pointer;
 }
@@ -100,6 +123,6 @@
 
 .copyrights {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    right: 30px;
+    bottom: 20px;
 }

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Environment, Stats, useEnvironment } from '@react-three/drei'
+import { Environment, useEnvironment } from '@react-three/drei'
 import isEmpty from 'lodash.isempty'
 
 import { selectBoard, selectIsPlayerTurn } from '../../store/game/selectors'
@@ -51,7 +51,7 @@ function Board() {
                         }
                     })}
             </mesh>
-            <Stats />
+            {/* <Stats /> */}
             {/* <gridHelper /> */}
         </>
     )

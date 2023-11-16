@@ -46,17 +46,17 @@ function Status() {
                     <BoardPreview
                         {...{ data }}
                         className="boardPreview"
-                        onClick={() => setIsConfirmationDialogOpen(true)}
+                        onClick={() => !isCompleted && setIsConfirmationDialogOpen(true)}
                     />
                     <div className="boardChangeHint">Change the board</div>
 
+                    <div className="playerPoints points">{playerPoints}</div>
                     <div className="status">
-                        <div className="points">{playerPoints}</div>
                         <div className="statusBar">
                             <div className="progressBar" style={{ width: `${progress}%` }} />
                         </div>
-                        <div className="points">{computerPoints}</div>
                     </div>
+                    <div className="computerPoints points">{computerPoints}</div>
                 </>
             )}
 
