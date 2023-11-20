@@ -13,7 +13,7 @@ function isValidArray<T>(array?: T) {
 function calculatePosition(index: number): Vec3 {
     const unit = Math.sqrt(3) * 0.5 * 1.025
     const [row, col] = [Math.floor(index / COLUMNS), index % COLUMNS]
-    return [-5.3 + col * unit + (row * unit) / 2, 0, -3 + row * 0.77] as Vec3
+    return [-5 + col * unit + (row * unit) / 2, 0, -3 + row * 0.77] as Vec3
 }
 
 function calculateDistance(p1: Vec3, p2: Vec3) {

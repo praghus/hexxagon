@@ -20,7 +20,7 @@ function BoardPreview({ className, data, onClick }: Props) {
                         key={id}
                         points="30,15 22.5,28 7.5,28 0,15 7.5,2 22.5,2"
                         fill={getPawnColor(num)}
-                        transform={`translate(${-115 + position[0] * 30},${112 + position[2] * 30}) rotate(90)`}
+                        transform={`translate(${-124 + position[0] * 30},${112 + position[2] * 30}) rotate(90)`}
                     />
                 ]
             }
